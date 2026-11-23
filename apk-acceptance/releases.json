@@ -65,6 +65,12 @@
       "sha256": "sha256:63acf68248beb87dda4ed2785468c2679602d61bd4f0ef9b81abe992bb5a6c8e",
       "size": 12766,
       "url": "credential-watch-1.0.10.apk"
+    },
+    {
+      "version": "1.0.11",
+      "sha256": "sha256:74b67966cee8710b1962b9011e1f0bab7f83b53c96d49d757564b22471a4b029",
+      "size": 12766,
+      "url": "credential-watch-1.0.11.apk"
     }
   ]
 }
