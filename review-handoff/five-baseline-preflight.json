@@ -1,0 +1,45 @@
+{
+  "state_dir": ".state-five-baseline-preflight",
+  "offline": false,
+  "engine": "combined",
+  "assets": [
+    {
+      "id": "blind-github",
+      "kind": "github",
+      "url": "https://github.com/ziyil55333-dotcom/cloud-credential-watch-test.git",
+      "branch": "codex/blind-github",
+      "owner": "Project fixture owner"
+    },
+    {
+      "id": "blind-gitee",
+      "kind": "gitee",
+      "url": "https://gitee.com/n123_40_1/cloud-credential-watch-gitee-fixtures.git",
+      "branch": "codex/blind-gitee",
+      "owner": "Project fixture owner"
+    },
+    {
+      "id": "blind-apk",
+      "kind": "apk",
+      "url": "https://raw.githubusercontent.com/ziyil55333-dotcom/cloud-credential-watch-test/codex-blind-apk/apk-acceptance/releases.json",
+      "catalog_revision": "github_commit",
+      "owner": "Project fixture owner"
+    },
+    {
+      "id": "blind-article",
+      "kind": "article",
+      "url": "https://ziyil55333-dotcom.github.io/cloud-credential-watch-public-fixtures/blind-article/feed.xml",
+      "owner": "Project fixture owner"
+    },
+    {
+      "id": "blind-oci",
+      "kind": "oci",
+      "url": "https://ghcr.io/v2/ziyil55333-dotcom/cloud-credential-watch-public-fixtures",
+      "tag": "blind-eval",
+      "registry_token_url": "https://ghcr.io/token",
+      "extra_hosts": [
+        "pkg-containers.githubusercontent.com"
+      ],
+      "owner": "Project fixture owner"
+    }
+  ]
+}
