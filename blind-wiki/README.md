@@ -8,3 +8,7 @@
 - **回执** 下载 `wiki-blind-revision-metadata`。各 `wiki-XX.json` 的 `query.pages[0].revisions[0].revid` 是相应计划编号的实际版本，连同首次扫描告警一并留存。
 
 测试内容必须是未签发的合成样本，分支公开可读。日志、标准答案、真实凭据和账号信息留在评审人手中。
+
+## 合并配置与导入回执
+
+打开[详细操作与命令](blind-review.md#用一条命令合并配置或导入回执)，使用[脚本](assemble-blind-review.py)从 Actions ZIP 生成六入口配置，并按版本号填入 24 条 Wiki 回执。
