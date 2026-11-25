@@ -1,0 +1,107 @@
+name: MediaWiki blind review window
+on:
+  push:
+    branches: [codex/blind-wiki]
+    paths: [blind-wiki/request.json]
+permissions:
+  contents: read
+jobs:
+  wiki:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - name: Read the requested revision and validate the batch
+        id: request
+        run: |
+          set -euo pipefail
+          git init --quiet request
+          git -C request fetch --quiet --depth 1 "https://github.com/$GITHUB_REPOSITORY.git" "$GITHUB_SHA"
+          git -C request checkout --quiet --detach FETCH_HEAD
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+
+          directory = Path("request/blind-wiki")
+          mode = json.loads((directory / "request.json").read_text(encoding="utf-8"))["mode"]
+          if mode not in {"baseline", "blind"}:
+              raise SystemExit("Expected mode baseline or blind")
+          revisions = directory / "revisions"
+          if mode == "blind":
+              expected = {f"wiki-{number:02d}.wiki" for number in range(1, 25)}
+              if {path.name for path in revisions.glob("*.wiki")} != expected:
+                  raise SystemExit("Exactly 24 revisions named wiki-01.wiki through wiki-24.wiki are required")
+              for filename in sorted(expected):
+                  path = revisions / filename
+                  if path.is_symlink() or not path.is_file() or not 0 < path.stat().st_size <= 65536:
+                      raise SystemExit(f"Invalid size or file type: {filename}")
+                  if not path.read_text(encoding="utf-8").strip():
+                      raise SystemExit(f"Empty revision: {filename}")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              print(f"mode={mode}", file=output)
+          PY
+      - name: Start the verified read-only MediaWiki gateway
+        id: start
+        run: |
+          set -euo pipefail
+          git init --quiet publisher
+          git -C publisher fetch --quiet --depth 1 https://github.com/ziyil55333-dotcom/cloud-credential-watch-public-fixtures.git af5aaccabfe9c17608f946d6e01bfd52619281d8
+          git -C publisher checkout --quiet FETCH_HEAD -- wiki-session.sh wiki-readonly.py
+          cd publisher
+          bash wiki-session.sh prepare
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          import os
+
+          directory = Path(os.environ["RUNNER_TEMP"]) / "wiki-evidence"
+          endpoint = json.loads((directory / "endpoint.json").read_text(encoding="utf-8"))
+          if endpoint["page_id"] != 2:
+              raise SystemExit("Page ID differs from the sealed path page-2.wiki")
+          asset = {
+              "id": "blind-wiki",
+              "kind": "wiki",
+              "url": f"https://{endpoint['host']}/api.php",
+              "page_id": 2,
+              "owner": "Project fixture owner",
+          }
+          (directory / "wiki-asset.json").write_text(json.dumps(asset) + "\n", encoding="utf-8")
+          PY
+      - name: Announce the current endpoint
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: wiki-ready-${{ steps.start.outputs.hostname }}-${{ steps.start.outputs.page_id }}
+          path: |
+            ${{ runner.temp }}/wiki-evidence/endpoint.json
+            ${{ runner.temp }}/wiki-evidence/wiki-asset.json
+            ${{ runner.temp }}/wiki-evidence/baseline.json
+          retention-days: 3
+      - name: Keep the clean preflight endpoint available
+        if: steps.request.outputs.mode == 'baseline'
+        run: sleep 120
+      - name: Publish the sealed reviewer's 24 revisions
+        if: steps.request.outputs.mode == 'blind'
+        run: |
+          set -euo pipefail
+          evidence="$RUNNER_TEMP/wiki-evidence"
+          sleep 480
+          for number in $(seq -w 1 24); do
+            version="wiki-$number"
+            {
+              cat "request/blind-wiki/revisions/$version.wiki"
+              printf '\n<!-- blind release %s -->\n' "$version"
+            } | docker exec -i cw-public-wiki php maintenance/run.php edit --user Admin --summary "$version" Acceptance_fixture
+            curl --fail --silent --show-error --max-time 12 --get http://127.0.0.1:8833/api.php \
+              --data-urlencode action=query --data-urlencode prop=revisions --data-urlencode format=json \
+              --data-urlencode formatversion=2 --data-urlencode titles=Acceptance_fixture \
+              --data-urlencode rvlimit=1 --data-urlencode 'rvprop=ids|timestamp' > "$evidence/$version.json"
+            sleep 8
+          done
+          sleep 120
+      - name: Preserve revision metadata for the reviewer
+        if: steps.start.outcome == 'success'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: wiki-blind-revision-metadata
+          path: ${{ runner.temp }}/wiki-evidence/*.json
+          retention-days: 14
