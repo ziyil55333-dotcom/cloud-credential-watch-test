@@ -99,7 +99,7 @@ jobs:
           done
           sleep 120
       - name: Preserve revision metadata for the reviewer
-        if: steps.start.outcome == 'success'
+        if: ${{ (success() || failure()) && steps.start.outcome == 'success' }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: wiki-blind-revision-metadata
