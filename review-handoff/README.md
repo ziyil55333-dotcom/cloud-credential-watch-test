@@ -9,7 +9,7 @@
 | --- | --- | --- |
 | `github-public-retest` | 已核验 | 告警命中本次公开提交的指定位置，检测时延区间为 14.278–21.947 秒。[公开提交](https://github.com/ziyil55333-dotcom/cloud-credential-watch-test/commit/b7f60a7a4f1e1e72753d8bcc012fe1748ceb0d24) |
 | `extension-review` | 已核验 | 公告源接入的三轮告警数为 0、1、1，首次告警时间和核心代码指纹核对通过。 |
-| `blind-review` | 五入口预检已回执，待封存 | 从本页的当前批次继续，独立选样、封存、投放并交回证据。[六入口准备记录](blind-assets-2026-11-25.md) |
+| `blind-review` | 已封存，待启动观察 | 从本页第 3 节继续，按本轮同步安排投放并交回证据。[六入口准备记录](blind-assets-2026-11-25.md) |
 
 ## 给 Codex 的一条指令
 
@@ -17,7 +17,7 @@
 
 ## 当前批次 `blind-20261126-172420`
 
-五入口基线预检已回执，各有 0 条告警。MediaWiki 的本轮临时地址待启动。实际投放 **0/144**，待评审人选样并封存。先读同一批次目录中的[评审人回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26.md)和[项目方回复](results/blind-review/blind-20261126-172420/project-response-2026-11-26.md)。有更新时以该批次最新记录和实际证据为准。
+评审人已于 2026-11-26 18:03（北京时间）封存。本轮 24 个 APK 已构建并通过签名校验。实际投放 **0/144**，MediaWiki 正式作业和六入口观察待启动。按 [11 月 27 日 19:00–22:00（北京时间）同步安排](results/blind-review/blind-20261126-172420/project-rollout-2026-11-27.md)从第 3 节继续。 [封存回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-preseal.md#封存及同步窗口) · [技术准备回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-operations-ready.md)
 
 ### 1. 恢复本轮工作目录
 
