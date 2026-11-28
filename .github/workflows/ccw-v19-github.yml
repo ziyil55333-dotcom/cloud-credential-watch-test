@@ -2,7 +2,7 @@ name: Publish v19 synthetic GitHub test versions
 on:
   push:
     branches: [codex-blind-20261128-v19-github-job]
-    paths: [ccw-v19-github.zip]
+    paths: ['.github/workflows/ccw-v19-github.yml']
 permissions:
   contents: write
 concurrency: ccw-v19-github-publisher
@@ -19,7 +19,8 @@ jobs:
           set -euo pipefail
           branch=codex-blind-20261128-v19
           input="$RUNNER_TEMP/fixtures.zip"
-          cp ccw-v19-github.zip "$input"
+          gate=https://clicks-singer-passes-auction.trycloudflare.com/publisher/v19
+          curl -fsS --proto '=https' --max-time 30 "$gate/github.zip" -o "$input"
           git fetch origin "$branch"
           git switch --detach FETCH_HEAD
           test "$(git rev-parse HEAD)" = 8b05f6e40bcf85d8eb8fc38e1345e2da96a66a29
@@ -34,6 +35,16 @@ jobs:
             git add -- "$target"
             git commit --quiet -m "Publish synthetic v19 release $number"
             git push origin "HEAD:refs/heads/$branch"
-            printf 'published github-%s %s\n' "$number" "$(git rev-parse HEAD)"
-            if [[ "$number" != 24 ]]; then sleep 40; fi
+            digest=$(git rev-parse HEAD)
+            printf 'published github-%s %s\n' "$number" "$digest"
+            seen=false
+            for attempt in $(seq 1 50); do
+              state=$(curl -fsS --proto '=https' --max-time 8 "$gate/done/github/$digest")
+              if [[ "$state" == done ]]; then seen=true; break; fi
+              sleep 5
+            done
+            if [[ "$seen" != true ]]; then
+              echo "Detector did not acknowledge github-$number" >&2
+              exit 1
+            fi
           done
