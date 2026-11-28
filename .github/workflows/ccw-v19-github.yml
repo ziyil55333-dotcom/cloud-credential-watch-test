@@ -23,18 +23,27 @@ jobs:
           curl -fsS --proto '=https' --max-time 30 "$gate/github.zip" -o "$input"
           git fetch origin "$branch"
           git switch --detach FETCH_HEAD
-          test "$(git rev-parse HEAD)" = 8b05f6e40bcf85d8eb8fc38e1345e2da96a66a29
+          test "$(git rev-parse HEAD)" = a846db05a6c3c40bb381025fe7a373aec38cdd85
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           mkdir -p "fixtures/$branch"
-          for number in $(seq -w 1 24); do
+          for number in $(seq -w 14 24); do
             source="release-$number.env"
             target="fixtures/$branch/$source"
             unzip -p "$input" "$source" > "$target"
             test -s "$target"
             git add -- "$target"
             git commit --quiet -m "Publish synthetic v19 release $number"
-            git push origin "HEAD:refs/heads/$branch"
+            push_log="$RUNNER_TEMP/ccw-v19-push.log"
+            if ! git push origin "HEAD:refs/heads/$branch" >"$push_log" 2>&1; then
+              if grep -q 'GH013' "$push_log" && grep -qi 'push protection' "$push_log"; then
+                echo "Blocked by GitHub push protection: github-$number"
+                git switch --detach HEAD^
+                continue
+              fi
+              echo "Unexpected push failure for github-$number; stopping without retry" >&2
+              exit 1
+            fi
             digest=$(git rev-parse HEAD)
             printf 'published github-%s %s\n' "$number" "$digest"
             seen=false
