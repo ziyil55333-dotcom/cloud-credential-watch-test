@@ -1,0 +1,39 @@
+name: Publish v19 synthetic GitHub test versions
+on:
+  push:
+    branches: [codex-blind-20261128-v19-github-job]
+    paths: [ccw-v19-github.zip]
+permissions:
+  contents: write
+concurrency: ccw-v19-github-publisher
+jobs:
+  publish:
+    if: github.repository == 'ziyil55333-dotcom/cloud-credential-watch-test' && github.actor == 'ziyil55333-dotcom'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Publish only on the dedicated test branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch=codex-blind-20261128-v19
+          input="$RUNNER_TEMP/fixtures.zip"
+          cp ccw-v19-github.zip "$input"
+          git fetch origin "$branch"
+          git switch --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = 8b05f6e40bcf85d8eb8fc38e1345e2da96a66a29
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          mkdir -p "fixtures/$branch"
+          for number in $(seq -w 1 24); do
+            source="release-$number.env"
+            target="fixtures/$branch/$source"
+            unzip -p "$input" "$source" > "$target"
+            test -s "$target"
+            git add -- "$target"
+            git commit --quiet -m "Publish synthetic v19 release $number"
+            git push origin "HEAD:refs/heads/$branch"
+            printf 'published github-%s %s\n' "$number" "$(git rev-parse HEAD)"
+            if [[ "$number" != 24 ]]; then sleep 40; fi
+          done
