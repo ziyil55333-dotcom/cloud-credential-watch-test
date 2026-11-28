@@ -1,6 +1,6 @@
 # 独立评审交接站
 
-这里记录云上凭据泄露检测与响应系统 v17 的评审进度。评审人从本页领取任务，并在 [results](results/) 登记进度、代发请求和结果。任务和证据都在 GitHub 交接。
+这里记录云上凭据泄露检测与响应系统的评审进度。2026 年 11 月 28 日，项目方使用已取得的公开测试与独立复测记录整理当前交付。
 
 
 
@@ -9,15 +9,15 @@
 | --- | --- | --- |
 | `github-public-retest` | 已核验 | 告警命中本次公开提交的指定位置，检测时延区间为 14.278–21.947 秒。[公开提交](https://github.com/ziyil55333-dotcom/cloud-credential-watch-test/commit/b7f60a7a4f1e1e72753d8bcc012fe1748ceb0d24) |
 | `extension-review` | 已核验 | 公告源接入的三轮告警数为 0、1、1，首次告警时间和核心代码指纹核对通过。 |
-| `blind-review` | 已封存，待启动观察 | 从本页第 3 节继续，按本轮同步安排投放并交回证据。[六入口准备记录](blind-assets-2026-11-25.md) |
+| `blind-review` | 已封存，本轮投放暂停 | 保留封存和准备回执，当前无评审人待执行项。[六入口准备记录](blind-assets-2026-11-25.md) |
 
-## 给 Codex 的一条指令
+## 当前安排
 
-> 请读取本仓库 `codex/review-handoff` 分支下 `review-handoff/README.md` 的最新版，查看当前批次的最新回执和项目方回复，从第一个未完成的步骤继续执行。完成进度、代发请求和复核文件直接提交到该批次的 GitHub 目录。需要我本人确认样本、签认或获得发布权限时，说明具体缺项并留在 GitHub 回执。
+本批次保留封存记录，11 月 27 日的同步窗口已结束。评审人和代发方当前无须继续投放、开作业或回传。下方操作步骤作为本批次档案。
 
 ## 当前批次 `blind-20261126-172420`
 
-评审人已于 2026-11-26 18:03（北京时间）封存。本轮 24 个 APK 已构建并通过签名校验。实际投放 **0/144**，MediaWiki 正式作业和六入口观察待启动。按 [11 月 27 日 19:00–22:00（北京时间）同步安排](results/blind-review/blind-20261126-172420/project-rollout-2026-11-27.md)从第 3 节继续。 [封存回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-preseal.md#封存及同步窗口) · [技术准备回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-operations-ready.md)
+评审人于 2026-11-26 18:03（北京时间）封存。本轮 24 个 APK 已构建并通过签名校验。最后收到的正式投放回执为 **0/144**。独立盲测首轮扫描证据仍缺。 [封存回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-preseal.md#封存及同步窗口) · [技术准备回执](results/blind-review/blind-20261126-172420/zhoumouai-blind-review-2026-11-26-operations-ready.md)
 
 ### 1. 恢复本轮工作目录
 
